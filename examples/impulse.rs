@@ -15,5 +15,9 @@ fn main() {
         solver.step(dt);
     }
 
-    println!("t = {:.3e} s, pression au centre : {}", solver.time(), solver.p.get(50, 50));
+    println!(
+        "t = {:.3e} s, pression au centre : {}",
+        solver.time(),
+        solver.p.get(50, 50)
+    );
 }

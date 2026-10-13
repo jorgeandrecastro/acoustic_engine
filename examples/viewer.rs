@@ -13,7 +13,7 @@ const STEPS_PER_FRAME: usize = 4;
 fn main() {
     // Air : rho = 1.2 kg/m³, c = 340 m/s, cellules de 1 m
     let mut s = AcousticSolver2D::new(N, N, 1.0, 1.0, 1.2, 340.0);
-    s.set_absorbing_boundary(25, 0.1);
+    s.set_pml_boundary(25, 15.0); // 25 cellules de largeur, intensité 15.0
 
     // Obstacle : mur très dense (même c, pour ne pas réduire le pas de temps)
     s.set_medium_rect(190, 90, 200, 210, 1200.0, 340.0);

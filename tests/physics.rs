@@ -5,7 +5,11 @@ use acoustic_engine::{AcousticSolver2D, Waveform};
 /// Maximum de |p| ; renvoie `f32::INFINITY` si une valeur est NaN ou infinie.
 fn max_abs(s: &AcousticSolver2D) -> f32 {
     s.p.as_slice().iter().fold(0.0f32, |m, v| {
-        if v.is_finite() { m.max(v.abs()) } else { f32::INFINITY }
+        if v.is_finite() {
+            m.max(v.abs())
+        } else {
+            f32::INFINITY
+        }
     })
 }
 
@@ -114,23 +118,23 @@ fn absorbing_boundary_removes_energy() {
 #[test]
 fn heterogeneous_medium_changes_arrival_time() {
     // Bande rapide (c = 2) entre source et récepteur : arrivée plus tôt.
-    let arrival = |fast: bool| {
-        let mut s = unit_solver(201);
-        if fast {
-            s.set_medium_rect(0, 0, 201, 201, 1.0, 2.0);
-        }
-        s.add_source(100, 100, Waveform::Ricker { freq: 0.05 }, 1.0);
-        let rx = s.add_receiver(150, 100);
-        let dt = 0.4;
-        for _ in 0..(150.0 / dt) as usize {
-            s.step(dt);
-        }
-        let tr = s.receiver(rx);
-        let (imax, _) = tr
-            .iter()
-            .enumerate()
-            .fold((0, 0.0f32), |a, (i, v)| if v.abs() > a.1 { (i, v.abs()) } else { a });
-        imax as f32 * dt
-    };
+    let arrival =
+        |fast: bool| {
+            let mut s = unit_solver(201);
+            if fast {
+                s.set_medium_rect(0, 0, 201, 201, 1.0, 2.0);
+            }
+            s.add_source(100, 100, Waveform::Ricker { freq: 0.05 }, 1.0);
+            let rx = s.add_receiver(150, 100);
+            let dt = 0.4;
+            for _ in 0..(150.0 / dt) as usize {
+                s.step(dt);
+            }
+            let tr = s.receiver(rx);
+            let (imax, _) = tr.iter().enumerate().fold((0, 0.0f32), |a, (i, v)| {
+                if v.abs() > a.1 { (i, v.abs()) } else { a }
+            });
+            imax as f32 * dt
+        };
     assert!(arrival(true) < arrival(false) - 10.0);
 }
